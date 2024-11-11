@@ -6,22 +6,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.cafe24.myapp.ui.theme.MyAppTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.serialization.Serializable
+import java.sql.Timestamp
 import androidx.compose.material3.Surface as Surface1
+
 
 val supabase = createSupabaseClient(
     supabaseUrl = "http://martclinic.cafe24.com:8000/rest/v1/",
@@ -42,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                     ){
-                    ClinicList()
+                    ClinicsList()
                 }
             }
         }
@@ -52,7 +57,7 @@ class MainActivity : ComponentActivity() {
 @Serializable
 data class Clinic (
     val id: Int,
-    val createdAt: DateTimeUnit,
+    val createdAt: String,
     val province: String,
     val city: String,
     val clinicName: String,
@@ -63,11 +68,12 @@ data class Clinic (
 )
 
 @Composable
-fun ClinicList(){
+fun ClinicsList(){
     val clinics = remember { mutableStateListOf<Clinic>() }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO){
-            val response = supabase.postgrest["clinic"].select().decodeList<Clinic>()
+            val response = supabase.from("clinics").select().decodeList<Clinic>()
+//            val response = supabase.postgrest.from("clinics").select().decodeList<Clinic>()
             clinics.addAll(response)
         }
     }

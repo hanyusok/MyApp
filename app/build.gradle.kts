@@ -50,6 +50,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildToolsVersion = "35.0.0"
 }
 
 dependencies {
@@ -77,7 +78,4 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     //ktor
     implementation("io.ktor:ktor-client-android:3.0.1")
-
-
-
 }
